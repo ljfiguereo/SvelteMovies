@@ -1,7 +1,10 @@
 <script>
+	import Demo from "./components/Demo.svelte";
+
 	let data = [];
 	const API_KEY = "8d01df9a";
 	let query = "Casino";
+	let contador = 1;
 
 	async function getMovies(params) {}
 
@@ -19,19 +22,13 @@
 				year: item.Year,
 			};
 		}, []);
-		// response = [...response.Search].reduce((container, item) => {
-		// 	const object = {
-		// 		id: item.imdbID,
-		// 		url: item.Poster.replace("_V1_SX300.", ""),
-		// 		title: item.Title,
-		// 		type: item.Type,
-		// 		year: item.Year,
-		// 	};
-		// 	container.push(object);
-		// 	return container;
-		// }, []);
-		console.log(response);
 	})();
+
+	const increment = () => {
+		contador += 1;
+	};
+	$: if (contador < 0) contador = 0;
+	$: multiplo = contador * 2;
 </script>
 
 <main>
@@ -46,6 +43,10 @@
 			<div />
 			<div />
 		</div>
+		<Demo />
+		<button on:click={increment}>Aumentar</button>
+		<h1>{`Contador ${contador}, Multiplo de 2: ${multiplo}`}</h1>
+		<button on:click={() => (contador -= 1)}>Disminuir</button>
 	</div>
 </main>
 
