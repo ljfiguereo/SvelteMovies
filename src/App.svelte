@@ -1,52 +1,71 @@
 <script>
-	import Demo from "./components/Demo.svelte";
+	import { onMount, onDestroy } from "svelte";
+	import { fly } from "svelte/transition";
+
+	import Article from "./components/Article.svelte";
 
 	let data = [];
 	const API_KEY = "8d01df9a";
 	let query = "Casino";
 	let contador = 1;
+	let showLoader = false;
 
-	async function getMovies(params) {}
-
-	(async () => {
+	onMount(async () => {
 		let response = await fetch(
 			`https://www.omdbapi.com/?apikey=${API_KEY}&plot=full&s="${query}"`
 		);
 		response = await response.json();
-		response = [...response.Search].map((item) => {
-			return {
+		response = [...response.Search].reduce((container, item) => {
+			const object = {
 				id: item.imdbID,
 				url: item.Poster.replace("_V1_SX300.", ""),
 				title: item.Title,
 				type: item.Type,
 				year: item.Year,
 			};
+			container.push(object);
+			return container;
 		}, []);
-	})();
+		data = response;
+		// data = [...response.Search].map((item) => { return { id: item.imdbID, url: item.Poster.replace("_V1_SX300.", ""),
+		//title: item.Title, type: item.Type, year: item.Year};  }, []);
+	});
 
-	const increment = () => {
-		contador += 1;
+	const params = {
+		API_KEY,
+		query,
+		contador,
 	};
+
 	$: if (contador < 0) contador = 0;
 	$: multiplo = contador * 2;
 </script>
 
+<svelte:head>
+	<title>App de Peliculas</title>
+</svelte:head>
+
 <main>
 	<div class="loader-container">
 		<div class="loader">
-			<div />
-			<div />
-			<div />
-			<div />
-			<div />
-			<div />
-			<div />
-			<div />
+			{#each Array(8) as i}
+				<div />
+			{/each}
 		</div>
-		<Demo />
-		<button on:click={increment}>Aumentar</button>
-		<h1>{`Contador ${contador}, Multiplo de 2: ${multiplo}`}</h1>
-		<button on:click={() => (contador -= 1)}>Disminuir</button>
+		<button on:click={() => (showLoader = !showLoader)}>Show/Hide</button>
+		{#if showLoader}
+			<div
+				transition:fly={{
+					delay: 250,
+					duration: 2000,
+					// x: 50,
+					y: 200,
+					// opacity: 0,
+				}}
+			>
+				<Article {...params} />
+			</div>
+		{/if}
 	</div>
 </main>
 
