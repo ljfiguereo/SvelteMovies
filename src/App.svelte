@@ -2,6 +2,8 @@
 	import { onMount, onDestroy } from "svelte";
 	import { fly } from "svelte/transition";
 
+	import { store } from "./store/index";
+
 	import Article from "./components/Article.svelte";
 
 	let data = [];
@@ -27,6 +29,17 @@
 			return container;
 		}, []);
 		data = response;
+
+		store.update((state) => ({
+			...state,
+			id: data[20]?.id,
+			url: data[0].url,
+			title: data[0].title,
+			year: data[0].year,
+		}));
+
+		console.log(data);
+		console.log($store);
 		// data = [...response.Search].map((item) => { return { id: item.imdbID, url: item.Poster.replace("_V1_SX300.", ""),
 		//title: item.Title, type: item.Type, year: item.Year};  }, []);
 	});
@@ -47,12 +60,14 @@
 
 <main>
 	<div class="loader-container">
+		<div style="color: yellow;">{$store.id}</div>
+		<button on:click={contador.increment}>++</button>
 		<div class="loader">
 			{#each Array(8) as i}
 				<div />
 			{/each}
 		</div>
-		<button on:click={() => (showLoader = !showLoader)}>Show/Hide</button>
+		<button on:click={() => (showLoader = !showLoader)}>Show/Hide22</button>
 		{#if showLoader}
 			<div
 				transition:fly={{
