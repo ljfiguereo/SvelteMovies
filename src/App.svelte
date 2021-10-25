@@ -5,6 +5,7 @@
 	import { store } from "./store/index";
 
 	import Article from "./components/Article.svelte";
+	import Snackbar from "./components/Snackbar.svelte";
 
 	let data = [];
 	const API_KEY = "8d01df9a";
@@ -32,7 +33,7 @@
 
 		store.update((state) => ({
 			...state,
-			id: data[20]?.id,
+			id: data[0]?.id,
 			url: data[0].url,
 			title: data[0].title,
 			year: data[0].year,
@@ -60,6 +61,7 @@
 
 <main>
 	<div class="loader-container">
+		<i class="fas fa-helicopter" />
 		<div style="color: yellow;">{$store.id}</div>
 		<button on:click={contador.increment}>++</button>
 		<div class="loader">
@@ -68,6 +70,7 @@
 			{/each}
 		</div>
 		<button on:click={() => (showLoader = !showLoader)}>Show/Hide22</button>
+		<Snackbar />
 		{#if showLoader}
 			<div
 				transition:fly={{
